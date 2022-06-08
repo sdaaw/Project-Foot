@@ -13,6 +13,8 @@ public class CasinoManager : MonoBehaviour
     {
         public SlotObject.SlotObjectType type;
         public float odds;
+        public int winCount;
+        public float winMult;
         public GameObject obj;
     }
 
@@ -48,18 +50,6 @@ public class CasinoManager : MonoBehaviour
 
     private List<RollResult> rollResults = new List<RollResult>();
 
-    public float CommonWinMult;
-    public float UncommonWinMult;
-    public float RareWinMult;
-    public float UltraRareWinMult;
-    public float LegendaryWinMult;
-
-    public int CommonWinObjectCount;
-    public int UncommonWinObjectCount;
-    public int RareWinMObjectCount;
-    public int UltraRareWinObjectCount;
-    public int LegendaryWinObjectCount;
-
 
     public float WinAmount;
     public float BetAmount;
@@ -77,6 +67,13 @@ public class CasinoManager : MonoBehaviour
     public int slotLineCount;
     void Start()
     {
+
+        SlotObject sObj;
+        foreach(OddsStruct o in odds)
+        {
+            sObj = o.obj.GetComponent<SlotObject>();
+            sObj.objectData.type = o.type;
+        }
         /*
         List<string> resStrings = new List<string>();
         for(int i = 0; i < Screen.resolutions.Length; i++)
@@ -114,6 +111,11 @@ public class CasinoManager : MonoBehaviour
         }
     }
 
+    public void PayoutWin(GameObject[] winObjects)
+    {
+
+    }
+
     public void GatherRollResult()
     {
         slotResults = new List<SlotResult>();
@@ -143,80 +145,26 @@ public class CasinoManager : MonoBehaviour
             }
         }
 
-        foreach(SlotResult result in slotResults)
+        foreach(OddsStruct o in odds)
         {
-            print(result.type.ToString() + ": " + result.objCount);
-        }
-
-
-
-
-
-
-        /*foreach (SlotObject o in resultObjects)
-        {
-
-        }*/
-
-        /*if (result.commonCount >= CommonWinObjectCount)
-        {
-            foreach(SlotObject o in resultObjects)
+            foreach(SlotResult r in slotResults)
             {
-                if(o.objectData.type == SlotObject.SlotObjectType.Common)
+                if(o.type == r.type && r.objCount >= o.winCount)
                 {
-                    o.DoVisual();
+                    //win?
+                    foreach(SlotObject so in resultObjects)
+                    {
+                        if(so.objectData.type == o.type)
+                        {
+                            so.DoVisual();
+                            WinAmount = o.winMult * BetAmount;
+                        }
+                    }
                 }
             }
-            WinAmount += CommonWinMult * BetAmount;
         }
-        if (result.uncommonCount >= UncommonWinObjectCount)
-        {
-            foreach (SlotObject o in resultObjects)
-            {
-                if (o.objectData.type == SlotObject.SlotObjectType.Uncommon)
-                {
-                    o.DoVisual();
-                }
-            }
-            WinAmount += UncommonWinMult * BetAmount;
-        }
-        if (result.rareCount >= RareWinMObjectCount)
-        {
-            foreach (SlotObject o in resultObjects)
-            {
-                if (o.objectData.type == SlotObject.SlotObjectType.Rare)
-                {
-                    o.DoVisual();
-                }
-            }
-            WinAmount += RareWinMult * BetAmount;
-        }
-        if (result.ultraRareCount >= UltraRareWinObjectCount)
-        {
-            foreach (SlotObject o in resultObjects)
-            {
-                if (o.objectData.type == SlotObject.SlotObjectType.UltraRare)
-                {
-                    o.DoVisual();
-                }
-            }
-            WinAmount += UltraRareWinMult * BetAmount;
-        }
-        if (result.legendaryCount >= LegendaryWinObjectCount)
-        {
-            isAutoRoll = false; //for bonus
-            foreach (SlotObject o in resultObjects)
-            {
-                if (o.objectData.type == SlotObject.SlotObjectType.Legendary)
-                {
-                    o.DoVisual();
-                }
-            }
-            _slotBonus.StartBonus(result.legendaryCount);
-            WinAmount += LegendaryWinMult * BetAmount;
-        }*/
 
-        /*_myBalance += WinAmount;
+        _myBalance += WinAmount;
         if (WinAmount > 0)
         {
             _houseBalance -= WinAmount;
@@ -236,7 +184,7 @@ public class CasinoManager : MonoBehaviour
         _profitPercentage = (_myBalance / _moneyLost) * 100;
 
         statText.text = "House Profit: " + _houseBalance.ToString() + "\nMy Profit: " + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2");
-        StartCoroutine(AutoRoll());*/
+        StartCoroutine(AutoRoll());
     }
 
     IEnumerator AutoRoll()

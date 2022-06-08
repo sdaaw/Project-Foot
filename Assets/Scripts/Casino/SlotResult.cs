@@ -5,4 +5,5 @@ public class SlotResult
 {
     public int objCount;
     public SlotObject.SlotObjectType type;
+    public UnityEngine.GameObject obj;
 }

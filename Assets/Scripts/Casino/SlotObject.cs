@@ -19,6 +19,8 @@ public class SlotObject : MonoBehaviour
     {
         public SlotObjectType type;
     }
+
+    [HideInInspector]
     public ObjectData objectData;
     private bool _doAnim;
     private float _timer;
