@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class SlotLine : MonoBehaviour
 {
-    public List<GameObject> slotObjects;
 
-    public GameObject genericSlotObject;
+    public List<GameObject> slotObjects;
 
     public List<GameObject> currentLineObjects;
 
@@ -43,15 +42,16 @@ public class SlotLine : MonoBehaviour
 
     public float rollDuration;
 
-    private bool startDone;
 
     private AudioSource _audioSource;
     public AudioClip audioClip;
 
+    public CasinoManager cManager;
+
     void Start()
     {
         _audioSource = GetComponent<AudioSource>();
-        HandleObjectSpawn();
+        FillLines(SlotObject.SlotObjectType.Legendary);
         _ogMoveSpeed = moveSpeed;
         startPos.x = transform.position.x;
         moveSpeed = 0;
@@ -71,7 +71,6 @@ public class SlotLine : MonoBehaviour
     public void AddSlotObject(float yPos, SlotObject.SlotObjectType type)
     {
         SlotObject so;
-        //just rethink this
         foreach(GameObject a in slotObjects)
         {
             so = a.GetComponent<SlotObject>();
@@ -84,11 +83,11 @@ public class SlotLine : MonoBehaviour
         }
     }
 
-    private void HandleObjectSpawn()
+    private void FillLines(SlotObject.SlotObjectType type)
     {
         for(int i = 0; i < lineObjectCount; i++)
         {
-            AddSlotObject(i, SlotObject.SlotObjectType.Legendary);
+            AddSlotObject(i, type);
         }
     }
 
@@ -96,12 +95,14 @@ public class SlotLine : MonoBehaviour
     {
         float closest = 9999999f;
         GameObject rObj = null;
-        foreach(GameObject a in slotObjects)
+
+        foreach(CasinoManager.OddsStruct o in cManager.odds)
         {
-            if(Mathf.Abs(odds - a.GetComponent<SlotObject>().objectData.odds) < closest)
+            float objDiff = Mathf.Abs(odds - o.odds);
+            if(objDiff < closest)
             {
-                closest = Mathf.Abs(odds - a.GetComponent<SlotObject>().objectData.odds);
-                rObj = a;
+                closest = objDiff;
+                rObj = o.obj;
             }
         }
         return rObj;

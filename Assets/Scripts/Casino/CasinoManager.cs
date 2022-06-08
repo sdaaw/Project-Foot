@@ -2,8 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System;
 public class CasinoManager : MonoBehaviour
 {
+
+
+
+    [Serializable]
+    public struct OddsStruct
+    {
+        public SlotObject.SlotObjectType type;
+        public float odds;
+        public GameObject obj;
+    }
+
+    public List<OddsStruct> odds = new List<OddsStruct>();
+
     public List<SlotLine> SlotLines = new List<SlotLine>();
     public GameObject slotLineObject;
 
@@ -15,22 +29,24 @@ public class CasinoManager : MonoBehaviour
 
     public float turboModifier;
 
-    private bool _isTurbo;
+    private bool _isInBonus;
 
     public float rollDelay;
 
+    public List<SlotResult> slotResults = new List<SlotResult>();
 
     public TMP_Dropdown dropdownTest;
+
+    private SlotBonus _slotBonus;
 
 
     private struct RollResult
     {
-        public int commonCount;
-        public int uncommonCount;
-        public int rareCount;
-        public int ultraRareCount;
-        public int legendaryCount;
+        public SlotObject.SlotObjectType type;
+        public int objCount;
     }
+
+    private List<RollResult> rollResults = new List<RollResult>();
 
     public float CommonWinMult;
     public float UncommonWinMult;
@@ -61,12 +77,15 @@ public class CasinoManager : MonoBehaviour
     public int slotLineCount;
     void Start()
     {
+        /*
         List<string> resStrings = new List<string>();
         for(int i = 0; i < Screen.resolutions.Length; i++)
         {
             resStrings.Add(Screen.resolutions[i].ToString());
         } 
         dropdownTest.AddOptions(resStrings);
+        */
+        _slotBonus = GetComponent<SlotBonus>();
 
 
         _audioSource = GetComponent<AudioSource>();
@@ -78,56 +97,68 @@ public class CasinoManager : MonoBehaviour
 
             GameObject a = Instantiate(slotLineObject, new Vector3(xBuffer, 0, 5), Quaternion.identity);
             a.transform.SetParent(slotsParentObject.transform);
+            a.GetComponent<SlotLine>().cManager = this;
             SlotLines.Add(a.GetComponent<SlotLine>());
         }
         slotsParentObject.transform.position = new Vector3(0 - (gridObject.transform.localScale.x), 0, 2);
+
+
     }
 
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.Space) && !isAutoRoll)
+        if(Input.GetKeyUp(KeyCode.Space) && !isAutoRoll && !_isInBonus)
         {
-            isAutoRoll = true;
+            //isAutoRoll = true;
             StartCoroutine(RollLines());
         }
     }
 
     public void GatherRollResult()
     {
+        slotResults = new List<SlotResult>();
         List<SlotObject> resultObjects = new List<SlotObject>();
-        foreach(SlotLine line in SlotLines)
+        bool found = false;
+        foreach(SlotLine sl in SlotLines)
         {
-            foreach(GameObject o in line.currentLineObjects)
+            foreach(GameObject a in sl.currentLineObjects)
             {
-                resultObjects.Add(o.GetComponent<SlotObject>());
-            }
-        }
-        RollResult result = new RollResult();
-        foreach(SlotObject o in resultObjects)
-        {
-            if(o.objectData.type == SlotObject.SlotObjectType.Common)
-            {
-                result.commonCount++;
-            }
-            if (o.objectData.type == SlotObject.SlotObjectType.Uncommon)
-            {
-                result.uncommonCount++;
-            }
-            if (o.objectData.type == SlotObject.SlotObjectType.Rare)
-            {
-                result.rareCount++;
-            }
-            if (o.objectData.type == SlotObject.SlotObjectType.UltraRare)
-            {
-                result.ultraRareCount++;
-            }
-            if (o.objectData.type == SlotObject.SlotObjectType.Legendary)
-            {
-                result.legendaryCount++;
+                SlotResult slotResult = new SlotResult();
+                resultObjects.Add(a.GetComponent<SlotObject>());
+                foreach(SlotResult r in slotResults)
+                {
+                    if(r.type == a.GetComponent<SlotObject>().objectData.type)
+                    {
+                        r.objCount++;
+                        found = true;
+                    }
+                }
+                if(!found)
+                {
+                    slotResult.type = a.GetComponent<SlotObject>().objectData.type;
+                    slotResult.objCount = 1;
+                    slotResults.Add(slotResult);
+                }
+                found = false;
             }
         }
 
-        if(result.commonCount >= CommonWinObjectCount)
+        foreach(SlotResult result in slotResults)
+        {
+            print(result.type.ToString() + ": " + result.objCount);
+        }
+
+
+
+
+
+
+        /*foreach (SlotObject o in resultObjects)
+        {
+
+        }*/
+
+        /*if (result.commonCount >= CommonWinObjectCount)
         {
             foreach(SlotObject o in resultObjects)
             {
@@ -173,6 +204,7 @@ public class CasinoManager : MonoBehaviour
         }
         if (result.legendaryCount >= LegendaryWinObjectCount)
         {
+            isAutoRoll = false; //for bonus
             foreach (SlotObject o in resultObjects)
             {
                 if (o.objectData.type == SlotObject.SlotObjectType.Legendary)
@@ -180,10 +212,11 @@ public class CasinoManager : MonoBehaviour
                     o.DoVisual();
                 }
             }
+            _slotBonus.StartBonus(result.legendaryCount);
             WinAmount += LegendaryWinMult * BetAmount;
-        }
+        }*/
 
-        _myBalance += WinAmount;
+        /*_myBalance += WinAmount;
         if (WinAmount > 0)
         {
             _houseBalance -= WinAmount;
@@ -203,12 +236,11 @@ public class CasinoManager : MonoBehaviour
         _profitPercentage = (_myBalance / _moneyLost) * 100;
 
         statText.text = "House Profit: " + _houseBalance.ToString() + "\nMy Profit: " + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2");
-        StartCoroutine(AutoRoll());
+        StartCoroutine(AutoRoll());*/
     }
 
     IEnumerator AutoRoll()
     {
-        isAutoRoll = true;
         yield return new WaitForSeconds(0.5f);
         StartCoroutine(RollLines());
     }

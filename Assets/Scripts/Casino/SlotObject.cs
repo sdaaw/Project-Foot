@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 public class SlotObject : MonoBehaviour
 {
+
     public enum SlotObjectType
     {
         Common,
@@ -17,24 +18,17 @@ public class SlotObject : MonoBehaviour
     public struct ObjectData
     {
         public SlotObjectType type;
-        public float odds;
     }
     public ObjectData objectData;
-
-    private Vector3 _objectScale;
-    private Vector3 _destObjectScale;
     private bool _doAnim;
     private float _timer;
 
     public void Start()
     {
-        _objectScale = transform.localScale;
-        _destObjectScale *= 2;
     }
 
     public void DoVisual()
     {
-        //transform.localScale *= 2;
         StartCoroutine(ExpandObject());
     }
 
