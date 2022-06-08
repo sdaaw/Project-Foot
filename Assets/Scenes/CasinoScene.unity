@@ -639,6 +639,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8591d6659db5a2641a69f42acb739b4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  odds:
+  - type: 0
+    odds: 400
+    winCount: 11
+    winMult: 1.5
+    obj: {fileID: 1318473334992308, guid: c4a745562791bed45b1aede988752cb1, type: 3}
+  - type: 1
+    odds: 700
+    winCount: 8
+    winMult: 3
+    obj: {fileID: 1998567513602864, guid: 56a7b2ef1e59eeb41ad2574e750db5aa, type: 3}
+  - type: 2
+    odds: 800
+    winCount: 6
+    winMult: 5
+    obj: {fileID: 1306473772508078, guid: e57a2b79930a5984ca70ec63a0cc4f0c, type: 3}
+  - type: 3
+    odds: 950
+    winCount: 4
+    winMult: 10
+    obj: {fileID: 1611181750533486, guid: 65674c6110a97cd43bb788cf30452596, type: 3}
+  - type: 4
+    odds: 980
+    winCount: 3
+    winMult: 50
+    obj: {fileID: 1011548659502664, guid: 8f04f20afbe546f4e923d8bb383000db, type: 3}
   SlotLines: []
   slotLineObject: {fileID: 1905341832738341573, guid: 9d20ac518a791a84ba7fdcfb3226442b, type: 3}
   slotsParentObject: {fileID: 2072593046}
@@ -647,16 +673,6 @@ MonoBehaviour:
   turboModifier: 2
   rollDelay: 0.1
   dropdownTest: {fileID: 317293717}
-  CommonWinMult: 1.7
-  UncommonWinMult: 2.5
-  RareWinMult: 5
-  UltraRareWinMult: 10
-  LegendaryWinMult: 100
-  CommonWinObjectCount: 13
-  UncommonWinObjectCount: 9
-  RareWinMObjectCount: 8
-  UltraRareWinObjectCount: 7
-  LegendaryWinObjectCount: 3
   WinAmount: 0
   BetAmount: 50
   isAutoRoll: 0
