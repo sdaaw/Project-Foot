@@ -51,24 +51,21 @@ MonoBehaviour:
   - {fileID: 1998567513602864, guid: 56a7b2ef1e59eeb41ad2574e750db5aa, type: 3}
   - {fileID: 1611181750533486, guid: 65674c6110a97cd43bb788cf30452596, type: 3}
   - {fileID: 1011548659502664, guid: 8f04f20afbe546f4e923d8bb383000db, type: 3}
-  genericSlotObject: {fileID: 2413767423393005463, guid: ec0fbe41eb214ab4da9a7004cb3e7e31, type: 3}
   currentLineObjects: []
   gridObjects: []
   gridObject: {fileID: 817404701935662958, guid: 79170961f912df64c9f5e34596000ee1, type: 3}
-  moveSpeed: 0.03
-  slowdownSpeed: 0.001
-  rollTime: 1
-  timeBetweenObject: 0.1
-  spawnYPadding: 0
-  stopEasing: 0.05
+  moveSpeed: 0.35
+  slowdownSpeed: 0.05
+  rollTime: 1.5
   isRolling: 0
   startPos: {x: 0, y: 0, z: 5}
   direction: {x: 0, y: -1, z: 0}
-  maxLineLength: 2
   lineGap: 1
-  lineObjectCount: 4
+  lineObjectCount: 5
   rollDuration: 0.5
   audioClip: {fileID: 8300000, guid: 9fd37d244f89c4b47a645a0f90cdf8ad, type: 3}
+  cManager: {fileID: 0}
+  isSimRolling: 0
 --- !u!82 &-2903832025812485158
 AudioSource:
   m_ObjectHideFlags: 0

@@ -18,6 +18,12 @@ public class CasinoManager : MonoBehaviour
         public GameObject obj;
     }
 
+    private struct RollResult
+    {
+        public SlotObject.SlotObjectType type;
+        public int objCount;
+    }
+
     public List<OddsStruct> odds = new List<OddsStruct>();
 
     public List<SlotLine> SlotLines = new List<SlotLine>();
@@ -41,13 +47,6 @@ public class CasinoManager : MonoBehaviour
 
     private SlotBonus _slotBonus;
 
-
-    private struct RollResult
-    {
-        public SlotObject.SlotObjectType type;
-        public int objCount;
-    }
-
     private List<RollResult> rollResults = new List<RollResult>();
 
 
@@ -65,8 +64,15 @@ public class CasinoManager : MonoBehaviour
     public TMP_Text statText;
 
     public int slotLineCount;
+
+    private int _totalRolls;
+    private float _biggestWin = 0;
+
+    public bool simulationMode;
     void Start()
     {
+
+        //Application.targetFrameRate = 500;
 
         SlotObject sObj;
         foreach(OddsStruct o in odds)
@@ -104,7 +110,7 @@ public class CasinoManager : MonoBehaviour
 
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.Space) && !isAutoRoll && !_isInBonus)
+        if(Input.GetKey(KeyCode.Space) && !isAutoRoll && !_isInBonus)
         {
             //isAutoRoll = true;
             StartCoroutine(RollLines());
@@ -157,7 +163,12 @@ public class CasinoManager : MonoBehaviour
                         if(so.objectData.type == o.type)
                         {
                             so.DoVisual();
-                            WinAmount = o.winMult * BetAmount;
+                            int mult = 1;
+                            if(r.objCount - o.winCount != 0)
+                            {
+                                mult = r.objCount - o.winCount;
+                            }
+                            WinAmount = o.winMult * BetAmount * (mult + 1);
                         }
                     }
                 }
@@ -178,13 +189,27 @@ public class CasinoManager : MonoBehaviour
         {
             winText.text = WinAmount.ToString() + "!!";
         }
+        if (_biggestWin < WinAmount)
+        {
+            _biggestWin = WinAmount;
+        }
         WinAmount = 0;
         _moneyLost += BetAmount;
-
+        _totalRolls++;
         _profitPercentage = (_myBalance / _moneyLost) * 100;
 
-        statText.text = "House Profit: " + _houseBalance.ToString() + "\nMy Profit: " + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2");
-        StartCoroutine(AutoRoll());
+        statText.text = "House Profit: " + _houseBalance.ToString() + "\nMy Profit: " + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2") + "\nRolls: " + _totalRolls + "\nBiggest Win: " + _biggestWin;
+        if(isAutoRoll)
+        {
+            StartCoroutine(AutoRoll());
+        }
+        if(simulationMode)
+        {
+            foreach (SlotLine sl in SlotLines)
+            {
+                sl.isSimRolling = false;
+            }
+        }
     }
 
     IEnumerator AutoRoll()
@@ -198,21 +223,34 @@ public class CasinoManager : MonoBehaviour
     IEnumerator RollLines()
     {
         _myBalance -= BetAmount;
-        winText.text = "";
-        if (!SlotLines[0].GetComponent<SlotLine>().isRolling)
+        if(!simulationMode)
         {
-            _audioSource.PlayOneShot(rollAudioClip);
+            winText.text = "";
+            if (!SlotLines[0].GetComponent<SlotLine>().isRolling)
+            {
+                _audioSource.PlayOneShot(rollAudioClip);
+                foreach (SlotLine line in SlotLines)
+                {
+                    line.RollLine();
+                    yield return new WaitForSeconds(rollDelay);
+                }
+            }
+            while (SlotLines[slotLineCount - 1].isRolling)
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
+            yield return new WaitForSeconds(0.5f);
+        } else
+        {
             foreach (SlotLine line in SlotLines)
             {
-                line.RollLine();
-                yield return new WaitForSeconds(rollDelay);
+                if(!line.isSimRolling)
+                {
+                    line.RollInstantLine();
+                    yield return null;
+                }
             }
         }
-        while(SlotLines[slotLineCount - 1].isRolling)
-        {
-            yield return new WaitForSeconds(0.5f);
-        }
-        yield return new WaitForSeconds(0.5f);
         GatherRollResult();
     }
 }

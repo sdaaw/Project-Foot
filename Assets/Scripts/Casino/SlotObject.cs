@@ -40,7 +40,7 @@ public class SlotObject : MonoBehaviour
         {
             _timer += 1 * Time.deltaTime;
             float sinval = Mathf.Sin(_timer / 0.5f) / 30f;
-            float cosval = Mathf.Cos(_timer / 0.5f) / 30f;
+            float cosval = Mathf.Cos(_timer / 0.5f) / 40f;
             transform.localScale = new Vector3(transform.localScale.x + sinval, transform.localScale.y + cosval, transform.localScale.z + sinval);
         }
     }

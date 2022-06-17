@@ -104,12 +104,12 @@ MonoBehaviour:
   m_AdvancedMode: 0
   distance:
     m_OverrideState: 1
-    m_Value: 0.088
+    m_Value: 0.061
     min: 0
     max: 1
   cropToFit:
     m_OverrideState: 1
-    m_Value: 0.347
+    m_Value: 0.313
     min: 0
     max: 1
 --- !u!114 &-5929665336428598705
@@ -611,17 +611,17 @@ MonoBehaviour:
   m_AdvancedMode: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 0.77
+    m_Value: 0.78
     min: -1
     max: 1
   xMultiplier:
     m_OverrideState: 1
-    m_Value: 0.655
+    m_Value: 0.635
     min: 0
     max: 1
   yMultiplier:
     m_OverrideState: 1
-    m_Value: 0.752
+    m_Value: 0.678
     min: 0
     max: 1
   center:
@@ -629,7 +629,7 @@ MonoBehaviour:
     m_Value: {x: 0.5, y: 0.5}
   scale:
     m_OverrideState: 1
-    m_Value: 0.76
+    m_Value: 0.89
     min: 0.01
     max: 5
 --- !u!114 &8080410505252544629

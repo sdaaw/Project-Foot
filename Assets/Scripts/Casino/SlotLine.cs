@@ -21,24 +21,16 @@ public class SlotLine : MonoBehaviour
 
     public float rollTime;
 
-    public float timeBetweenObject;
-
-    public float spawnYPadding;
-
-    public float stopEasing;
-
     public bool isRolling;
 
     [HideInInspector]
     public Vector3 startPos;
     public Vector3 direction;
-
-    public float maxLineLength;
-
     public float lineGap;
 
     public int lineObjectCount;
 
+    private float _timer;
 
     public float rollDuration;
 
@@ -48,8 +40,14 @@ public class SlotLine : MonoBehaviour
 
     public CasinoManager cManager;
 
+    private Camera _camera;
+
+    public bool isSimRolling;
+
     void Start()
     {
+        _camera = FindObjectOfType<Camera>();
+        //lineObjectCount = (int)maxLineLength * 2;
         _audioSource = GetComponent<AudioSource>();
         FillLines(SlotObject.SlotObjectType.Legendary);
         _ogMoveSpeed = moveSpeed;
@@ -66,6 +64,7 @@ public class SlotLine : MonoBehaviour
             a.transform.SetParent(transform);
             gridObjects.Add(a);
         }
+        _camera.transform.position = new Vector3(_camera.transform.position.x, gridObjects[gridObjects.Count / 2].transform.position.y, _camera.transform.position.z);
     }
 
     public void AddSlotObject(float yPos, SlotObject.SlotObjectType type)
@@ -114,46 +113,46 @@ public class SlotLine : MonoBehaviour
         for (int i = 0; i < currentLineObjects.Count; i++)
         {
             currentLineObjects[i].transform.position += direction * moveSpeed;
-            if (currentLineObjects[i].transform.position.y < gridObjects[0].transform.position.y - (gridObjects[0].transform.localScale.y / 2) + spawnYPadding)
+            if (currentLineObjects[i].transform.position.y < gridObjects[0].transform.position.y - (gridObjects[0].transform.localScale.y / 2))
             {
                 Destroy(currentLineObjects[i]);
                 currentLineObjects.Remove(currentLineObjects[i]);
                 GameObject a = Instantiate(GetSlotObjectByOdds(rNum));
                 a.transform.SetParent(transform);
                 currentLineObjects.Add(a);
-                a.transform.position = new Vector3(transform.position.x, gridObjects[gridObjects.Count - 1].transform.position.y + (gridObjects[gridObjects.Count - 1].transform.localScale.y / 2) - spawnYPadding, transform.position.z);
+                a.transform.position = new Vector3(transform.position.x, gridObjects[gridObjects.Count - 1].transform.position.y + (gridObjects[gridObjects.Count - 1].transform.localScale.y / 2), transform.position.z);
             }
         }
     }
 
-    IEnumerator StartRoll()
+    public void FixedUpdate()
     {
-        float time = 0;
-        //float randTime = Random.Range(2f, 5f);
-        float randTime = rollTime;
-        while (time < randTime)
+        if(isRolling)
         {
-            while (moveSpeed < _ogMoveSpeed)
+            if (_timer < rollTime)
             {
-                moveSpeed += slowdownSpeed;
+                _timer += 1 * Time.deltaTime;
+                if(moveSpeed < _ogMoveSpeed)
+                {
+                    moveSpeed += slowdownSpeed;
+                }
                 HandleObjectClearing();
-                yield return new WaitForSeconds(slowdownSpeed);
+            } else
+            {
+                if(moveSpeed > 0f)
+                {
+                    moveSpeed -= slowdownSpeed;
+                    HandleObjectClearing();
+                }
+                foreach (GameObject a in currentLineObjects)
+                {
+                    SnapToClosestGrid(a);
+                }
+                _audioSource.PlayOneShot(audioClip);
+                isRolling = false;
+                _timer = 0;
             }
-            time += 1f * Time.deltaTime;
-            HandleObjectClearing();
-            yield return null;
         }
-        while (moveSpeed > 0f)
-        {
-            moveSpeed -= slowdownSpeed;
-            HandleObjectClearing();
-            yield return new WaitForSeconds(slowdownSpeed);
-        }
-        foreach (GameObject a in currentLineObjects)
-        {
-            SnapToClosestGrid(a);
-        }
-        isRolling = false;
     }
 
     public void SnapToClosestGrid(GameObject o)
@@ -173,7 +172,6 @@ public class SlotLine : MonoBehaviour
             }
         }
         o.transform.position = new Vector3(o.transform.position.x, bestObject.transform.position.y, o.transform.position.z);
-        _audioSource.PlayOneShot(audioClip);
     }
 
     private void ClearGridFlags()
@@ -184,6 +182,32 @@ public class SlotLine : MonoBehaviour
         }
     }
 
+    public void RollInstantLine()
+    {
+        if(!isSimRolling)
+        {
+            isSimRolling = true;
+            ClearLines();
+            for (int i = 0; i < gridObjects.Count; i++)
+            {
+                float rNum = Random.Range(0f, 1000f);
+                GameObject a = Instantiate(GetSlotObjectByOdds(rNum));
+                a.transform.SetParent(transform);
+                currentLineObjects.Add(a);
+                a.transform.position = new Vector3(transform.position.x, gridObjects[i].transform.position.y, transform.position.z);
+            }
+        }
+    }
+
+    public void ClearLines()
+    {
+        foreach(GameObject a in currentLineObjects)
+        {
+            Destroy(a);
+        }
+        currentLineObjects = new List<GameObject>();
+    }
+
     public void RollLine()
     {
         ClearGridFlags();
@@ -191,7 +215,6 @@ public class SlotLine : MonoBehaviour
         if (!isRolling)
         {
             isRolling = true;
-            StartCoroutine(StartRoll());
         }
     }
 
