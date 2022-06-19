@@ -26,6 +26,9 @@ public class CasinoManager : MonoBehaviour
 
     public List<OddsStruct> odds = new List<OddsStruct>();
 
+    public List<GameObject> bonusObjects;
+
+
     public List<SlotLine> SlotLines = new List<SlotLine>();
     public GameObject slotLineObject;
 
@@ -45,7 +48,7 @@ public class CasinoManager : MonoBehaviour
 
     public TMP_Dropdown dropdownTest;
 
-    private SlotBonus _slotBonus;
+    public SlotBonus slotBonus;
 
     private List<RollResult> rollResults = new List<RollResult>();
 
@@ -58,6 +61,8 @@ public class CasinoManager : MonoBehaviour
     private float _moneyLost;
     private float _profitPercentage;
 
+    public float rollTime;
+
     public bool isAutoRoll;
 
     public TMP_Text winText;
@@ -68,6 +73,7 @@ public class CasinoManager : MonoBehaviour
     private int _totalRolls;
     private float _biggestWin = 0;
 
+    public bool isRolling;
     public bool simulationMode;
     void Start()
     {
@@ -88,7 +94,7 @@ public class CasinoManager : MonoBehaviour
         } 
         dropdownTest.AddOptions(resStrings);
         */
-        _slotBonus = GetComponent<SlotBonus>();
+        slotBonus = GetComponent<SlotBonus>();
 
 
         _audioSource = GetComponent<AudioSource>();
@@ -104,24 +110,21 @@ public class CasinoManager : MonoBehaviour
             SlotLines.Add(a.GetComponent<SlotLine>());
         }
         slotsParentObject.transform.position = new Vector3(0 - (gridObject.transform.localScale.x), 0, 2);
-
-
     }
 
     void Update()
     {
-        if(Input.GetKey(KeyCode.Space) && !isAutoRoll && !_isInBonus)
+        if(Input.GetKeyDown(KeyCode.Space) && !isAutoRoll && !isRolling)
         {
             //isAutoRoll = true;
+            isRolling = true;
+            StartCoroutine(RollLines());
+        }
+        if(Input.GetKey(KeyCode.Space) && simulationMode)
+        {
             StartCoroutine(RollLines());
         }
     }
-
-    public void PayoutWin(GameObject[] winObjects)
-    {
-
-    }
-
     public void GatherRollResult()
     {
         slotResults = new List<SlotResult>();
@@ -150,53 +153,88 @@ public class CasinoManager : MonoBehaviour
                 found = false;
             }
         }
+        int bonusCount = 0;
+        slotBonus.goodObjects = 0;
 
-        foreach(OddsStruct o in odds)
+        if (slotBonus.isBonusActive)
         {
-            foreach(SlotResult r in slotResults)
+            foreach (SlotObject so in resultObjects)
             {
-                if(o.type == r.type && r.objCount >= o.winCount)
+                if (so.objectData.type == SlotObject.SlotObjectType.BonusGood)
                 {
-                    //win?
-                    foreach(SlotObject so in resultObjects)
+                    slotBonus.bonusMultiplier += 1;
+                }
+            }
+        }
+        else
+        {
+            foreach (OddsStruct o in odds)
+            {
+                foreach (SlotResult r in slotResults)
+                {
+                    if (o.type == r.type && r.objCount >= o.winCount)
                     {
-                        if(so.objectData.type == o.type)
+                        //win?
+                        foreach (SlotObject so in resultObjects)
                         {
-                            so.DoVisual();
-                            int mult = 1;
-                            if(r.objCount - o.winCount != 0)
+                            if (so.objectData.type == o.type)
                             {
-                                mult = r.objCount - o.winCount;
+                                if (so.objectData.type == SlotObject.SlotObjectType.Legendary)
+                                {
+                                    bonusCount++;
+                                }
+                                so.DoVisual();
+                                int mult = 1;
+                                if (r.objCount - o.winCount != 0)
+                                {
+                                    mult = r.objCount - o.winCount;
+                                }
+                                WinAmount = o.winMult * BetAmount * (mult + 1);
                             }
-                            WinAmount = o.winMult * BetAmount * (mult + 1);
                         }
                     }
                 }
             }
         }
 
-        _myBalance += WinAmount;
-        if (WinAmount > 0)
-        {
-            _houseBalance -= WinAmount;
-        }
-        _houseBalance += BetAmount;
 
-        if (WinAmount == 0)
+
+        if (slotBonus.isBonusActive)
         {
-            winText.text = "No win";
-        } else
-        {
-            winText.text = WinAmount.ToString() + "!!";
+            slotBonus.bonusInfoText.text = "Spins left: " + slotBonus.freeSpins + "\nMultiplier: " + slotBonus.bonusMultiplier + "x";
+            if (slotBonus.freeSpins == 0)
+            {
+                WinAmount = BetAmount * slotBonus.bonusMultiplier;
+                slotBonus.bonusPayout = (int)WinAmount;
+                slotBonus.FinishBonus();
+            }
         }
-        if (_biggestWin < WinAmount)
+        if(!slotBonus.isBonusActive)
         {
-            _biggestWin = WinAmount;
+            _myBalance += WinAmount;
+            if (WinAmount > 0)
+            {
+                _houseBalance -= WinAmount;
+            }
+            _houseBalance += BetAmount;
+
+            if (WinAmount == 0 && bonusCount < 3)
+            {
+                winText.text = "No win";
+            }
+            else if (WinAmount > 0)
+            {
+                winText.text = WinAmount.ToString() + "!!";
+            }
+            if (_biggestWin < WinAmount)
+            {
+                _biggestWin = WinAmount;
+            }
+            _moneyLost += BetAmount;
+            _totalRolls++;
+            _profitPercentage = (_myBalance / _moneyLost) * 100;
         }
         WinAmount = 0;
-        _moneyLost += BetAmount;
-        _totalRolls++;
-        _profitPercentage = (_myBalance / _moneyLost) * 100;
 
         statText.text = "House Profit: " + _houseBalance.ToString() + "\nMy Profit: " + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2") + "\nRolls: " + _totalRolls + "\nBiggest Win: " + _biggestWin;
         if(isAutoRoll)
@@ -210,6 +248,12 @@ public class CasinoManager : MonoBehaviour
                 sl.isSimRolling = false;
             }
         }
+        isRolling = false;
+
+        if(bonusCount >= 3 && !slotBonus.isBonusActive)
+        {
+            slotBonus.StartBonus(bonusCount);
+        }
     }
 
     IEnumerator AutoRoll()
@@ -222,15 +266,26 @@ public class CasinoManager : MonoBehaviour
 
     IEnumerator RollLines()
     {
-        _myBalance -= BetAmount;
+        if (slotBonus.isBonusActive)
+        {
+            slotBonus.freeSpins--;
+            slotBonus.bonusInfoText.text = "Spins left: " + slotBonus.freeSpins + "\nMultiplier: " + slotBonus.bonusMultiplier + "x";
+        }else
+        {
+            slotBonus.bonusAnnouncementText.text = null;
+            _myBalance -= BetAmount;
+        }
         if(!simulationMode)
         {
             winText.text = "";
             if (!SlotLines[0].GetComponent<SlotLine>().isRolling)
             {
+                float idx = 0.3f;
                 _audioSource.PlayOneShot(rollAudioClip);
                 foreach (SlotLine line in SlotLines)
                 {
+                    idx += 0.1f;
+                    line.rollTime = rollTime + idx;
                     line.RollLine();
                     yield return new WaitForSeconds(rollDelay);
                 }

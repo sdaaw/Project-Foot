@@ -11,16 +11,18 @@ public class SlotObject : MonoBehaviour
         Uncommon,
         Rare,
         UltraRare,
-        Legendary
+        Legendary,
+        BonusEvil,
+        BonusGood
     }
 
     [Serializable]
     public struct ObjectData
     {
         public SlotObjectType type;
+        public Sprite bonusSprite;
     }
 
-    [HideInInspector]
     public ObjectData objectData;
     private bool _doAnim;
     private float _timer;

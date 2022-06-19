@@ -90,6 +90,19 @@ public class SlotLine : MonoBehaviour
         }
     }
 
+
+    public GameObject GetBonusObject()
+    {
+        int rNum = Random.Range(0, 100);
+        if(rNum < 10)
+        {
+            return cManager.bonusObjects[1]; // good
+        } else
+        {
+            return cManager.bonusObjects[0]; // evil
+        }
+    }
+
     public GameObject GetSlotObjectByOdds(float odds)
     {
         float closest = 9999999f;
@@ -117,10 +130,19 @@ public class SlotLine : MonoBehaviour
             {
                 Destroy(currentLineObjects[i]);
                 currentLineObjects.Remove(currentLineObjects[i]);
-                GameObject a = Instantiate(GetSlotObjectByOdds(rNum));
+                GameObject a;
+                if(cManager.slotBonus.isBonusActive)
+                {
+                    a = Instantiate(GetBonusObject());
+                    a.GetComponent<SpriteRenderer>().sprite = a.GetComponent<SlotObject>().objectData.bonusSprite;
+                    a.transform.localScale = gridObjects[0].transform.localScale / 2.1f;
+                } else
+                {
+                    a = Instantiate(GetSlotObjectByOdds(rNum));
+                }
                 a.transform.SetParent(transform);
                 currentLineObjects.Add(a);
-                a.transform.position = new Vector3(transform.position.x, gridObjects[gridObjects.Count - 1].transform.position.y + (gridObjects[gridObjects.Count - 1].transform.localScale.y / 2), transform.position.z);
+                a.transform.position = new Vector3(transform.position.x, gridObjects[gridObjects.Count - 1].transform.position.y + (gridObjects[gridObjects.Count - 1].transform.localScale.y / 2), transform.position.z - 0.1f);
             }
         }
     }

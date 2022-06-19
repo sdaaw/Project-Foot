@@ -54,7 +54,7 @@ MonoBehaviour:
   currentLineObjects: []
   gridObjects: []
   gridObject: {fileID: 817404701935662958, guid: 79170961f912df64c9f5e34596000ee1, type: 3}
-  moveSpeed: 0.35
+  moveSpeed: 0.4
   slowdownSpeed: 0.05
   rollTime: 1.5
   isRolling: 0
