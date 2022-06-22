@@ -13,7 +13,7 @@ public class SlotBonus : MonoBehaviour
     private int _ogFreeSpins;
 
     public bool isBonusActive;
-    private bool _isBonusAvailable;
+    public bool isBonusAvailable;
 
     public int goodObjects;
 
@@ -29,7 +29,7 @@ public class SlotBonus : MonoBehaviour
     public void StartBonus(int bonusLevel)
     {
         goodObjects = 0;
-        _isBonusAvailable = true;
+        isBonusAvailable = true;
         freeSpins = bonusLevel * 2;
         _ogFreeSpins = freeSpins;
         bonusAnnouncementText.text = freeSpins.ToString() + " FREE SPINS AVAILABLE\nPress SPACE to begin";
@@ -39,8 +39,8 @@ public class SlotBonus : MonoBehaviour
     public void FinishBonus()
     {
         isBonusActive = false;
-        _isBonusAvailable = false;
-        bonusAnnouncementText.text = "YOU WON " + bonusPayout + " in " + _ogFreeSpins.ToString() + " SPINS" +"\nPress SPACE to continue.";
+        isBonusAvailable = false;
+        bonusAnnouncementText.text = "YOU WON $" + bonusPayout + " in " + _ogFreeSpins.ToString() + " SPINS" +"\nPress SPACE to continue.";
         freeSpins = 0;
         bonusPayout = 0;
         bonusMultiplier = 0;
@@ -48,7 +48,7 @@ public class SlotBonus : MonoBehaviour
 
     public void Update()
     {   
-        if(_isBonusAvailable)
+        if(isBonusAvailable)
         {
             if (Input.GetKeyUp(KeyCode.Space))
             {

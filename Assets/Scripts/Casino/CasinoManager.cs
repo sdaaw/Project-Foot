@@ -18,6 +18,8 @@ public class CasinoManager : MonoBehaviour
         public GameObject obj;
     }
 
+    public string CurrencyName;
+
     private struct RollResult
     {
         public SlotObject.SlotObjectType type;
@@ -40,8 +42,6 @@ public class CasinoManager : MonoBehaviour
 
     public float turboModifier;
 
-    private bool _isInBonus;
-
     public float rollDelay;
 
     public List<SlotResult> slotResults = new List<SlotResult>();
@@ -61,12 +61,19 @@ public class CasinoManager : MonoBehaviour
     private float _moneyLost;
     private float _profitPercentage;
 
+    public float MAXBET;
+
+    private float _myCurrentBet;
+
+
     public float rollTime;
 
     public bool isAutoRoll;
 
     public TMP_Text winText;
     public TMP_Text statText;
+    public TMP_Text betText;
+    public TMP_Text balanceText;
 
     public int slotLineCount;
 
@@ -77,8 +84,12 @@ public class CasinoManager : MonoBehaviour
     public bool simulationMode;
     void Start()
     {
-
+        _myBalance = 5000;
+        _myCurrentBet = BetAmount;
+        balanceText.text = "Balance: " + "$" + _myBalance;
+        betText.text = "Bet: " + "$" + BetAmount;
         //Application.targetFrameRate = 500;
+
 
         SlotObject sObj;
         foreach(OddsStruct o in odds)
@@ -116,6 +127,10 @@ public class CasinoManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space) && !isAutoRoll && !isRolling)
         {
+            if(_myBalance < BetAmount)
+            {
+                return;
+            }
             //isAutoRoll = true;
             isRolling = true;
             StartCoroutine(RollLines());
@@ -224,7 +239,7 @@ public class CasinoManager : MonoBehaviour
             }
             else if (WinAmount > 0)
             {
-                winText.text = WinAmount.ToString() + "!!";
+                winText.text = "$" + WinAmount.ToString() + "!!";
             }
             if (_biggestWin < WinAmount)
             {
@@ -236,7 +251,7 @@ public class CasinoManager : MonoBehaviour
         }
         WinAmount = 0;
 
-        statText.text = "House Profit: " + _houseBalance.ToString() + "\nMy Profit: " + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2") + "\nRolls: " + _totalRolls + "\nBiggest Win: " + _biggestWin;
+        statText.text = "House Profit: $" + _houseBalance.ToString() + "\nMy Profit: $" + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2") + "\nRolls: " + _totalRolls + "\nBiggest Win: $" + _biggestWin;
         if(isAutoRoll)
         {
             StartCoroutine(AutoRoll());
@@ -272,8 +287,10 @@ public class CasinoManager : MonoBehaviour
             slotBonus.bonusInfoText.text = "Spins left: " + slotBonus.freeSpins + "\nMultiplier: " + slotBonus.bonusMultiplier + "x";
         }else
         {
-            slotBonus.bonusAnnouncementText.text = null;
+            slotBonus.bonusAnnouncementText.text = "";
+            slotBonus.bonusInfoText.text = "";
             _myBalance -= BetAmount;
+            balanceText.text = "Balance: " + "$" + _myBalance;
         }
         if(!simulationMode)
         {
@@ -308,4 +325,31 @@ public class CasinoManager : MonoBehaviour
         }
         GatherRollResult();
     }
+
+    public void IncreaseBet()
+    {
+
+        if (!slotBonus.isBonusAvailable)
+        {
+            if (_myCurrentBet < MAXBET)
+            {
+                _myCurrentBet += 10;
+                BetAmount = _myCurrentBet;
+                betText.text = "Bet: " + "$" + BetAmount;
+            }
+        }
+    }
+    public void DecreaseBet()
+    {
+        if (!slotBonus.isBonusAvailable)
+        {
+            if (_myCurrentBet > 0)
+            {
+                _myCurrentBet -= 10;
+                BetAmount = _myCurrentBet;
+                betText.text = "Bet: " + "$" + BetAmount;
+            }
+        }
+    }
+
 }
