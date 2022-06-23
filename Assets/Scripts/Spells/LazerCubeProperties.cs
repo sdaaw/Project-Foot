@@ -20,6 +20,9 @@ public class LazerCubeProperties : Spell
 
     private Material _material;
     private Vector3 _randDir;
+
+    public Color MyColor;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +39,8 @@ public class LazerCubeProperties : Spell
         _renderer.material.color = new Color(_renderer.material.color.r + Random.Range(-colorVariation, colorVariation),
                                              _renderer.material.color.g + Random.Range(-colorVariation, colorVariation),
                                              _renderer.material.color.b + Random.Range(-colorVariation, colorVariation), _alphaVal);
+
+        MyColor = _renderer.material.color;
     }
 
     // Update is called once per frame
@@ -53,7 +58,6 @@ public class LazerCubeProperties : Spell
 
             _aColor = new Color(_renderer.material.color.r, _renderer.material.color.g, _renderer.material.color.b, _alphaVal);
             _renderer.material.color = _aColor;
-            print(_aColor);
         } else
         {
             _alphaVal += 0.05f;

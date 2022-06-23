@@ -238,6 +238,7 @@ MonoBehaviour:
   boxBound: 50
   healthIncreaseMultiplierPerLevel: 1.1
   monsterCountLimit: 2000
+  allowSpawning: 0
 --- !u!114 &104182276
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6579,11 +6580,19 @@ MonoBehaviour:
   dps: 0
   isFrozen: 0
   gm: {fileID: 0}
-  cubeCount: 50
   lazerCubeObject: {fileID: 3266457044057659245, guid: 50b209da9bf1fc8498a84a2017dfd758, type: 3}
-  interval: 3
+  interval: 2
   lazerCubes: []
   isActive: 0
+  cubeCount: 50
+  galaxySpacingX: 0.187
+  galaxySpacingY: 0.19
+  galaxyRotationX: 0.5
+  galaxyRotationY: -0.22
+  colorProgress: {r: 0.98554486, g: 0.5707547, b: 1, a: 0}
+  galaxyColorProgressIntensity: 0.02
+  galaxySpeed: 0.91
+  cubeScale: {x: 0.5, y: 0.5, z: 0.5}
 --- !u!1 &1444707101
 GameObject:
   m_ObjectHideFlags: 0

@@ -51,7 +51,7 @@ public class ProgressionManager : MonoBehaviour
             }
             if(slider.value >= 1)
             {
-                _gm.pStats.LevelUp();
+                //_gm.pStats.LevelUp();
                 slider.value = 0;
                 _targetProgress = 1f - _targetProgress;
             }

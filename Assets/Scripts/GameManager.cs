@@ -87,7 +87,8 @@ public class GameManager : MonoBehaviour
         {
             float bCubeDPS = GetSpellDPS(activeBounceCubes);
             float oCubeDPS = GetSpellDPS(orbitingCube.orbitingObjects);
-            DPSText.text = "Bouncing Cube       " + bCubeDPS.ToString("F1") + "\n Orbiting Cube        " + oCubeDPS.ToString("F1");
+            float lCubeDPS = GetSpellDPS(lazerCube.lazerCubes);
+            DPSText.text = "Bouncing Cube       " + bCubeDPS.ToString("F1") + "\nOrbiting Cube        " + oCubeDPS.ToString("F1") + "\nLazer Cube           " + lCubeDPS.ToString("F1");
         }
         yield return new WaitForSeconds(0.1f);
         StartCoroutine(DPSDisplay());

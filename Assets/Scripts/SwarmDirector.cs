@@ -18,6 +18,8 @@ public class SwarmDirector : MonoBehaviour
 
     public int monsterCountLimit;
 
+    public bool allowSpawning;
+
     private GameManager _gm;
     // Start is called before the first frame update
     void Start()
@@ -30,12 +32,15 @@ public class SwarmDirector : MonoBehaviour
     {
         if(!_gm.isGameFrozen)
         {
-            timer += 1 * Time.deltaTime;
-            if (timer > spawnRate)
+            if(allowSpawning)
             {
-                //SpawnMonsterInRandomArea(monsterList[Random.Range(0, monsterList.Count)]);
-                SpawnInGroup(monsterList[1], 20);
-                timer = 0;
+                timer += 1 * Time.deltaTime;
+                if (timer > spawnRate)
+                {
+                    //SpawnMonsterInRandomArea(monsterList[Random.Range(0, monsterList.Count)]);
+                    SpawnInGroup(monsterList[1], 20);
+                    timer = 0;
+                }
             }
         }
     }
