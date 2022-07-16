@@ -681,6 +681,7 @@ MonoBehaviour:
   slotBonus: {fileID: 0}
   WinAmount: 0
   BetAmount: 50
+  myBalance: 0
   MAXBET: 500
   rollTime: 0
   isAutoRoll: 0
@@ -690,7 +691,7 @@ MonoBehaviour:
   balanceText: {fileID: 840014859}
   slotLineCount: 5
   isRolling: 0
-  simulationMode: 0
+  simulationMode: 1
 --- !u!4 &173999654
 Transform:
   m_ObjectHideFlags: 0
@@ -1878,7 +1879,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1097981177
 RectTransform:
   m_ObjectHideFlags: 0

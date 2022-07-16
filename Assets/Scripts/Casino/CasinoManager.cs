@@ -57,7 +57,7 @@ public class CasinoManager : MonoBehaviour
     public float BetAmount;
 
     private float _houseBalance;
-    private float _myBalance;
+    public float myBalance;
     private float _moneyLost;
     private float _profitPercentage;
 
@@ -84,9 +84,9 @@ public class CasinoManager : MonoBehaviour
     public bool simulationMode;
     void Start()
     {
-        _myBalance = 5000;
+        myBalance = 5000;
         _myCurrentBet = BetAmount;
-        balanceText.text = "Balance: " + "$" + _myBalance;
+        balanceText.text = "Balance: " + "$" + myBalance;
         betText.text = "Bet: " + "$" + BetAmount;
         //Application.targetFrameRate = 500;
 
@@ -127,7 +127,7 @@ public class CasinoManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Space) && !isAutoRoll && !isRolling)
         {
-            if(_myBalance < BetAmount)
+            if(myBalance < BetAmount && !slotBonus.isBonusActive)
             {
                 return;
             }
@@ -135,7 +135,7 @@ public class CasinoManager : MonoBehaviour
             isRolling = true;
             StartCoroutine(RollLines());
         }
-        if(Input.GetKey(KeyCode.Space) && simulationMode)
+        if(Input.GetKeyUp(KeyCode.Space) && simulationMode)
         {
             StartCoroutine(RollLines());
         }
@@ -226,7 +226,7 @@ public class CasinoManager : MonoBehaviour
         }
         if(!slotBonus.isBonusActive)
         {
-            _myBalance += WinAmount;
+            myBalance += WinAmount;
             if (WinAmount > 0)
             {
                 _houseBalance -= WinAmount;
@@ -247,11 +247,11 @@ public class CasinoManager : MonoBehaviour
             }
             _moneyLost += BetAmount;
             _totalRolls++;
-            _profitPercentage = (_myBalance / _moneyLost) * 100;
+            _profitPercentage = (myBalance / _moneyLost) * 100;
         }
         WinAmount = 0;
 
-        statText.text = "House Profit: $" + _houseBalance.ToString() + "\nMy Profit: $" + _myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2") + "\nRolls: " + _totalRolls + "\nBiggest Win: $" + _biggestWin;
+        statText.text = "House Profit: $" + _houseBalance.ToString() + "\nMy Profit: $" + myBalance.ToString() + "\nProfit%: " + _profitPercentage.ToString("F2") + "\nRolls: " + _totalRolls + "\nBiggest Win: $" + _biggestWin;
         if(isAutoRoll)
         {
             StartCoroutine(AutoRoll());
@@ -289,8 +289,8 @@ public class CasinoManager : MonoBehaviour
         {
             slotBonus.bonusAnnouncementText.text = "";
             slotBonus.bonusInfoText.text = "";
-            _myBalance -= BetAmount;
-            balanceText.text = "Balance: " + "$" + _myBalance;
+            myBalance -= BetAmount;
+            balanceText.text = "Balance: " + "$" + myBalance;
         }
         if(!simulationMode)
         {

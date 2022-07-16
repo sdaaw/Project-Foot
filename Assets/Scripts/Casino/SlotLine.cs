@@ -210,10 +210,19 @@ public class SlotLine : MonoBehaviour
         {
             isSimRolling = true;
             ClearLines();
+            GameObject a = new GameObject();
             for (int i = 0; i < gridObjects.Count; i++)
             {
-                float rNum = Random.Range(0f, 1000f);
-                GameObject a = Instantiate(GetSlotObjectByOdds(rNum));
+                if(cManager.slotBonus.isBonusActive)
+                {
+                    a = Instantiate(GetBonusObject());
+                    a.GetComponent<SpriteRenderer>().sprite = a.GetComponent<SlotObject>().objectData.bonusSprite;
+                    a.transform.localScale = gridObjects[0].transform.localScale / 2.1f;
+                } else
+                {
+                    float rNum = Random.Range(0f, 1000f);
+                    a = Instantiate(GetSlotObjectByOdds(rNum));
+                }
                 a.transform.SetParent(transform);
                 currentLineObjects.Add(a);
                 a.transform.position = new Vector3(transform.position.x, gridObjects[i].transform.position.y, transform.position.z);

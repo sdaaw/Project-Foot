@@ -238,7 +238,7 @@ MonoBehaviour:
   boxBound: 50
   healthIncreaseMultiplierPerLevel: 1.1
   monsterCountLimit: 2000
-  allowSpawning: 0
+  allowSpawning: 1
 --- !u!114 &104182276
 MonoBehaviour:
   m_ObjectHideFlags: 0

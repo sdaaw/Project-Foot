@@ -56,13 +56,13 @@ MonoBehaviour:
   gridObject: {fileID: 817404701935662958, guid: 79170961f912df64c9f5e34596000ee1, type: 3}
   moveSpeed: 0.4
   slowdownSpeed: 0.05
-  rollTime: 1.5
+  rollTime: 4
   isRolling: 0
   startPos: {x: 0, y: 0, z: 5}
   direction: {x: 0, y: -1, z: 0}
   lineGap: 1
-  lineObjectCount: 5
-  rollDuration: 0.5
+  lineObjectCount: 4
+  rollDuration: 3
   audioClip: {fileID: 8300000, guid: 9fd37d244f89c4b47a645a0f90cdf8ad, type: 3}
   cManager: {fileID: 0}
   isSimRolling: 0
