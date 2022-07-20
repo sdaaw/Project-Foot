@@ -31,6 +31,7 @@ public class Item : MonoBehaviour
 
     private bool _isDragging;
     private RectTransform _thisRect;
+
     private void Start()
     {
         _thisRect = GetComponent<RectTransform>();
@@ -84,10 +85,14 @@ public class Item : MonoBehaviour
 
     public void E_OnCursorHover()
     {
-        print(itemName);
         if(!_isDragging)
         {
+
         }
+    }
+
+    public void ShowToolTip()
+    {
     }
 
     public void E_OnCursorHold()
@@ -114,13 +119,6 @@ public class Item : MonoBehaviour
                 closestObj = a;
             } 
         }
-
         inventoryManager.inventory.MoveItem(slotObject.GetComponent<InventorySlot>().slottedItem, closestObj);
-
-        /*InventorySlot closestInvSlot = closestObj.GetComponent<InventorySlot>();
-        InventorySlot thisInvSlot = thisSlot.GetComponent<InventorySlot>();
-
-        closestInvSlot.slottedItem.GetComponent<RectTransform>().position = thisSlot.GetComponent<RectTransform>().position;
-        GetComponent<RectTransform>().position = closestInvSlot.GetComponent<RectTransform>().position;*/
     }
 }
