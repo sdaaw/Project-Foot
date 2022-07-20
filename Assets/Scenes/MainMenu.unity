@@ -572,16 +572,20 @@ PrefabInstance:
       objectReference: {fileID: 1758881554}
     - target: {fileID: 9155278491424140459, guid: 0d05592437c8955448c72c61ba07be29, type: 3}
       propertyPath: items.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9155278491424140459, guid: 0d05592437c8955448c72c61ba07be29, type: 3}
       propertyPath: items.Array.data[0]
       value: 
-      objectReference: {fileID: 353160821427618775, guid: 9d13d295875112444a00e6247194922e, type: 3}
+      objectReference: {fileID: 4598369923409278657, guid: 0d715988497e2524f9c1f404a9ae3ed3, type: 3}
     - target: {fileID: 9155278491424140459, guid: 0d05592437c8955448c72c61ba07be29, type: 3}
       propertyPath: items.Array.data[1]
       value: 
-      objectReference: {fileID: 353160821427618775, guid: 9d16842c43f73f246a6636b7497bfcdd, type: 3}
+      objectReference: {fileID: 4598369923409278657, guid: 62d29fea7fdb5df428a437302f7a345a, type: 3}
+    - target: {fileID: 9155278491424140459, guid: 0d05592437c8955448c72c61ba07be29, type: 3}
+      propertyPath: items.Array.data[2]
+      value: 
+      objectReference: {fileID: 4598369923409278657, guid: 876807c49a52bce4f88b343c5d4d0707, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0d05592437c8955448c72c61ba07be29, type: 3}
 --- !u!1 &1080650280
@@ -922,7 +926,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
